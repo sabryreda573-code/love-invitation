@@ -601,7 +601,7 @@
             }
         }
 
-        /* Sheep animation styles (continuous spawn while gallery open) */
+        /* Sheep animation styles (continuous back-and-forth with heartbeat) */
         .sheep-container {
             position: absolute;
             left: 0;
@@ -616,37 +616,36 @@
         .sheep {
             position: absolute;
             font-size: 36px;
-            left: -10%;
+            left: 50%;
+            transform: translateX(-140%);
             filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
             will-change: transform, opacity;
-            /* --dur in ms controls travel time; set by JS per sheep */
-            animation: sheepWalk var(--dur, 4200ms) linear forwards, sheepBounce 1s ease-in-out infinite;
+            /* --dur controls travel time; --delay staggers starts */
+            animation: sheepLoop var(--dur, 5000ms) ease-in-out infinite alternate;
             opacity: 0;
         }
 
-        @keyframes sheepWalk {
+        @keyframes sheepLoop {
             0% {
                 opacity: 0;
                 transform: translateX(-140%) translateY(0) scale(1);
             }
-            12% {
+            20% {
                 opacity: 1;
             }
-            50% {
-                transform: translateX(30%) translateY(0) scale(1);
+            40% {
+                transform: translateX(-10%) translateY(-6px) scale(1.06); /* heartbeat */
+            }
+            60% {
+                transform: translateX(10%) translateY(0) scale(1);
+            }
+            80% {
+                transform: translateX(60%) translateY(-4px) scale(1.04); /* small pulse */
             }
             100% {
                 opacity: 0;
-                transform: translateX(140%) translateY(0) scale(0.95);
+                transform: translateX(140%) translateY(0) scale(0.98);
             }
-        }
-
-        @keyframes sheepBounce {
-            0% { transform: translateY(0); }
-            25% { transform: translateY(-8px); }
-            50% { transform: translateY(0); }
-            75% { transform: translateY(-6px); }
-            100% { transform: translateY(0); }
         }
     </style>
 </head>
@@ -816,42 +815,34 @@
                 startSheepLoop();
             }, 300);
         }
-        let sheepIntervalId = null;
+        let activeSheep = [];
         function startSheepLoop() {
-            if (sheepIntervalId) return; // already running
-            // spawn one immediately and then at intervals
-            spawnSheep();
-            sheepIntervalId = setInterval(spawnSheep, 1200);
-        }
-
-        function stopSheepLoop() {
-            if (sheepIntervalId) {
-                clearInterval(sheepIntervalId);
-                sheepIntervalId = null;
-            }
-            // remove remaining sheep
-            document.querySelectorAll('.sheep').forEach(s => s.remove());
-        }
-
-        function spawnSheep() {
+            if (activeSheep.length) return; // already running
             const container = document.getElementById('sheepContainer');
             if (!container) return;
 
-            const s = document.createElement('div');
-            s.className = 'sheep';
-            s.textContent = '🐑';
-            // random vertical offset within container
-            const top = 6 + Math.floor(Math.random() * 28); // 6..34px
-            s.style.top = top + 'px';
-            // random duration between 3.8s and 6.2s
-            const dur = 3800 + Math.floor(Math.random() * 2400);
-            s.style.setProperty('--dur', dur + 'ms');
-            container.appendChild(s);
+            const sheepCount = 4;
+            for (let i = 0; i < sheepCount; i++) {
+                const s = document.createElement('div');
+                s.className = 'sheep';
+                s.textContent = '🐑';
+                // random vertical offset within container
+                const top = 6 + Math.floor(Math.random() * 36); // 6..42px
+                s.style.top = top + 'px';
+                // random duration between 4s and 7s
+                const dur = 4000 + Math.floor(Math.random() * 3000);
+                s.style.setProperty('--dur', dur + 'ms');
+                // start at a random point in the animation so they look natural
+                const delay = Math.floor(Math.random() * dur);
+                s.style.animationDelay = '-' + delay + 'ms';
+                container.appendChild(s);
+                activeSheep.push(s);
+            }
+        }
 
-            // remove after animation ends (give a small buffer)
-            setTimeout(() => {
-                s.remove();
-            }, dur + 400);
+        function stopSheepLoop() {
+            activeSheep.forEach(s => s.remove());
+            activeSheep = [];
         }
 
         function checkPassword(event) {
