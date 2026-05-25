@@ -601,13 +601,13 @@
             }
         }
 
-        /* Sheep animation styles */
+        /* Sheep animation styles (continuous spawn while gallery open) */
         .sheep-container {
             position: absolute;
             left: 0;
             right: 0;
-            top: 10px;
-            height: 48px;
+            top: 6px;
+            height: 64px;
             pointer-events: none;
             overflow: visible;
             z-index: 50;
@@ -615,33 +615,38 @@
 
         .sheep {
             position: absolute;
-            font-size: 34px;
-            transform: translateX(-140%);
-            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
-            animation: sheepWalk 4s linear forwards;
+            font-size: 36px;
+            left: -10%;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
             will-change: transform, opacity;
+            /* --dur in ms controls travel time; set by JS per sheep */
+            animation: sheepWalk var(--dur, 4200ms) linear forwards, sheepBounce 1s ease-in-out infinite;
+            opacity: 0;
         }
-
-        .sheep.delay-0 { animation-delay: 0.0s; }
-        .sheep.delay-1 { animation-delay: 0.35s; }
-        .sheep.delay-2 { animation-delay: 0.7s; }
 
         @keyframes sheepWalk {
             0% {
                 opacity: 0;
                 transform: translateX(-140%) translateY(0) scale(1);
             }
-            25% {
+            12% {
                 opacity: 1;
-                transform: translateX(-30%) translateY(-6px) scale(1.02);
             }
-            60% {
+            50% {
                 transform: translateX(30%) translateY(0) scale(1);
             }
             100% {
                 opacity: 0;
                 transform: translateX(140%) translateY(0) scale(0.95);
             }
+        }
+
+        @keyframes sheepBounce {
+            0% { transform: translateY(0); }
+            25% { transform: translateY(-8px); }
+            50% { transform: translateY(0); }
+            75% { transform: translateY(-6px); }
+            100% { transform: translateY(0); }
         }
     </style>
 </head>
@@ -808,30 +813,45 @@
 
             // بعد دخول الـ Gallery، شغّل أنميشن الخرفان
             setTimeout(() => {
-                createSheep();
+                startSheepLoop();
             }, 300);
         }
+        let sheepIntervalId = null;
+        function startSheepLoop() {
+            if (sheepIntervalId) return; // already running
+            // spawn one immediately and then at intervals
+            spawnSheep();
+            sheepIntervalId = setInterval(spawnSheep, 1200);
+        }
 
-        function createSheep() {
+        function stopSheepLoop() {
+            if (sheepIntervalId) {
+                clearInterval(sheepIntervalId);
+                sheepIntervalId = null;
+            }
+            // remove remaining sheep
+            document.querySelectorAll('.sheep').forEach(s => s.remove());
+        }
+
+        function spawnSheep() {
             const container = document.getElementById('sheepContainer');
             if (!container) return;
 
-            const sheepCount = 3;
-            for (let i = 0; i < sheepCount; i++) {
-                const s = document.createElement('div');
-                s.className = 'sheep delay-' + i;
-                s.textContent = '🐑';
-                // وضع عمودي متدرج
-                s.style.top = (6 + i * 12) + 'px';
-                s.style.left = '-10%';
-                container.appendChild(s);
+            const s = document.createElement('div');
+            s.className = 'sheep';
+            s.textContent = '🐑';
+            // random vertical offset within container
+            const top = 6 + Math.floor(Math.random() * 28); // 6..34px
+            s.style.top = top + 'px';
+            // random duration between 3.8s and 6.2s
+            const dur = 3800 + Math.floor(Math.random() * 2400);
+            s.style.setProperty('--dur', dur + 'ms');
+            container.appendChild(s);
 
-                // إزالة بعد انتهاء الأنميشن
-                const total = 4000 + (i * 350);
-                setTimeout(() => {
-                    s.remove();
-                }, total + 300);
-            }
+            // remove after animation ends (give a small buffer)
+            setTimeout(() => {
+                s.remove();
+            }, dur + 400);
         }
 
         function checkPassword(event) {
@@ -863,6 +883,8 @@
             document.getElementById('loginSection').classList.remove('hidden-content');
             document.getElementById('password').value = '';
             document.getElementById('errorMsg').textContent = '';
+            // stop sheep when leaving gallery
+            stopSheepLoop();
         }
 
         function openModal(photoId) {
