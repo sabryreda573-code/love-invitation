@@ -600,6 +600,49 @@
                 transform: translate(var(--tx), var(--ty)) scale(0);
             }
         }
+
+        /* Sheep animation styles */
+        .sheep-container {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 10px;
+            height: 48px;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 50;
+        }
+
+        .sheep {
+            position: absolute;
+            font-size: 34px;
+            transform: translateX(-140%);
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
+            animation: sheepWalk 4s linear forwards;
+            will-change: transform, opacity;
+        }
+
+        .sheep.delay-0 { animation-delay: 0.0s; }
+        .sheep.delay-1 { animation-delay: 0.35s; }
+        .sheep.delay-2 { animation-delay: 0.7s; }
+
+        @keyframes sheepWalk {
+            0% {
+                opacity: 0;
+                transform: translateX(-140%) translateY(0) scale(1);
+            }
+            25% {
+                opacity: 1;
+                transform: translateX(-30%) translateY(-6px) scale(1.02);
+            }
+            60% {
+                transform: translateX(30%) translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(140%) translateY(0) scale(0.95);
+            }
+        }
     </style>
 </head>
 <body>
@@ -626,8 +669,9 @@
             <h1>مفاجأة خاصة بڪكِ 🤎🫂</h1>
             
             <div class="celebration-text" id="celebrationText">
-                🌙 كل عام وأنتِ بألف خير بعيد الفطر المبارك 🌙
+                🌙 عيد أضحىٰ مبارڪ 🌙
             </div>
+            <div class="sheep-container" id="sheepContainer" aria-hidden="true"></div>
 
             <div class="welcome-text">
                 <p>ڪُل عامٍ والڪُل يعرفنا معًا لا قدر الله أياماً تخلو منڪكِ 🤎🫂</p>
@@ -761,6 +805,33 @@
             setTimeout(() => {
                 createConfetti();
             }, 100);
+
+            // بعد دخول الـ Gallery، شغّل أنميشن الخرفان
+            setTimeout(() => {
+                createSheep();
+            }, 300);
+        }
+
+        function createSheep() {
+            const container = document.getElementById('sheepContainer');
+            if (!container) return;
+
+            const sheepCount = 3;
+            for (let i = 0; i < sheepCount; i++) {
+                const s = document.createElement('div');
+                s.className = 'sheep delay-' + i;
+                s.textContent = '🐑';
+                // وضع عمودي متدرج
+                s.style.top = (6 + i * 12) + 'px';
+                s.style.left = '-10%';
+                container.appendChild(s);
+
+                // إزالة بعد انتهاء الأنميشن
+                const total = 4000 + (i * 350);
+                setTimeout(() => {
+                    s.remove();
+                }, total + 300);
+            }
         }
 
         function checkPassword(event) {
