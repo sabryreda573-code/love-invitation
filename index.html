@@ -450,6 +450,156 @@
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #FFD700 0%, #FFA500 100%);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotateZ(0deg) translateX(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotateZ(720deg) translateX(var(--tx));
+            }
+        }
+
+        .confetti.active {
+            animation: confettiFall 3s ease-in forwards;
+        }
+
+        .gallery-entrance {
+            animation: gallerySlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes gallerySlideIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotateY(90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0);
+            }
+        }
+
+        .celebration-text {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: #FF6B9D;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(40px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .photo-gallery .photo-item {
+            animation: photoItemEntry 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+        }
+
+        .photo-gallery .photo-item:nth-child(1) { animation-delay: 0.1s; }
+        .photo-gallery .photo-item:nth-child(2) { animation-delay: 0.15s; }
+        .photo-gallery .photo-item:nth-child(3) { animation-delay: 0.2s; }
+        .photo-gallery .photo-item:nth-child(4) { animation-delay: 0.25s; }
+        .photo-gallery .photo-item:nth-child(5) { animation-delay: 0.3s; }
+        .photo-gallery .photo-item:nth-child(6) { animation-delay: 0.35s; }
+        .photo-gallery .photo-item:nth-child(7) { animation-delay: 0.4s; }
+        .photo-gallery .photo-item:nth-child(8) { animation-delay: 0.45s; }
+        .photo-gallery .photo-item:nth-child(9) { animation-delay: 0.5s; }
+        .photo-gallery .photo-item:nth-child(10) { animation-delay: 0.55s; }
+
+        @keyframes photoItemEntry {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotateZ(-180deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateZ(0);
+            }
+        }
+
+        .message {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f0ff 100%);
+            border-right: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: right;
+            color: #555;
+            line-height: 1.6;
+            font-size: 15px;
+            animation: messageSlideIn 0.8s ease-out 0.6s backwards;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .logo-burst {
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo-burst::before,
+        .logo-burst::after {
+            content: '✨';
+            position: absolute;
+            font-size: 24px;
+            opacity: 0;
+            animation: burstOut 1s ease-out;
+        }
+
+        .logo-burst::before {
+            left: -40px;
+            animation-delay: 0s;
+        }
+
+        .logo-burst::after {
+            right: -40px;
+            animation-delay: 0.2s;
+        }
+
+        @keyframes burstOut {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -475,6 +625,10 @@
             <div class="heart">💕</div>
             <h1>مفاجأة خاصة بڪكِ 🤎🫂</h1>
             
+            <div class="celebration-text" id="celebrationText">
+                🌙 كل عام وأنتِ بألف خير بعيد الفطر المبارك 🌙
+            </div>
+
             <div class="welcome-text">
                 <p>ڪُل عامٍ والڪُل يعرفنا معًا لا قدر الله أياماً تخلو منڪكِ 🤎🫂</p>
             </div>
@@ -577,6 +731,38 @@
             }
         }
 
+        function createConfetti() {
+            const confettiPieces = 50;
+            const colors = ['#FFD700', '#FFA500', '#FF69B4', '#FF1493', '#FF6347', '#FFB6C1', '#FFD700', '#FFA500'];
+            
+            for (let i = 0; i < confettiPieces; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+                    
+                    document.body.appendChild(confetti);
+                    confetti.classList.add('active');
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function animateGalleryEntrance() {
+            const gallerySection = document.getElementById('gallerySection');
+            gallerySection.classList.add('gallery-entrance');
+            
+            // إنشاء confetti في المقدمة
+            setTimeout(() => {
+                createConfetti();
+            }, 100);
+        }
+
         function checkPassword(event) {
             event.preventDefault();
             const inputPassword = document.getElementById('password').value;
@@ -588,6 +774,7 @@
                 setTimeout(() => {
                     document.getElementById('loginSection').classList.add('hidden-content');
                     document.getElementById('gallerySection').classList.add('active');
+                    animateGalleryEntrance();
                 }, 300);
             } else {
                 errorMsg.textContent = '❌ كلمة السر خاطئة، حاولي تاني!';
@@ -601,6 +788,7 @@
 
         function logout() {
             document.getElementById('gallerySection').classList.remove('active');
+            document.getElementById('gallerySection').classList.remove('gallery-entrance');
             document.getElementById('loginSection').classList.remove('hidden-content');
             document.getElementById('password').value = '';
             document.getElementById('errorMsg').textContent = '';
