@@ -22,7 +22,9 @@
 
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 540px;
+            margin: 0 auto;
+            padding: 0 12px;
         }
 
         .login-card {
@@ -140,8 +142,8 @@
 
         .photo-gallery {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
             margin-bottom: 30px;
         }
 
@@ -243,6 +245,8 @@
             width: 100%;
             position: relative;
             animation: zoomIn 0.3s ease-out;
+            max-height: calc(100vh - 80px);
+            overflow: auto;
         }
 
         @keyframes zoomIn {
@@ -270,8 +274,25 @@
         .modal-image {
             width: 100%;
             height: auto;
+            max-height: 70vh;
             display: block;
+            object-fit: contain;
             border-radius: 15px 15px 0 0;
+        }
+
+        /* Smaller screen tweaks */
+        @media (max-width: 420px) {
+            .login-card { padding: 28px 18px; }
+            h1 { font-size: 22px; }
+            .heart { font-size: 48px; }
+            .submit-btn, .logout-btn { padding: 12px; font-size: 15px; }
+            .photo-item { border-radius: 12px; }
+        }
+
+        @media (max-width: 320px) {
+            .login-card { padding: 20px 12px; }
+            h1 { font-size: 20px; }
+            .subtitle { font-size: 13px; }
         }
 
         .welcome-text {
@@ -312,8 +333,8 @@
 
             <div class="music-player">
                 <h3>🎵 أغنيتك المفضلة</h3>
-                <audio id="bgAudio" controls autoplay preload="auto" style="margin-bottom: 10px;">
-                    <source src="صور/WhatsApp%20Audio%202026-05-25%20at%2010.59.38%20AM.mpeg" type="audio/mpeg">
+                <audio id="bgAudio" controls playsinline preload="auto" style="margin-bottom: 10px;">
+                    <source src="WhatsApp Audio 2026-05-25 at 10.59.38 AM.mpeg" type="audio/mpeg">
                     المتصفح لا يدعم تشغيل الأغاني
                 </audio>
                 <p style="font-size: 12px; color: #999;">اضغطي Play لتسمعي الأغنية ♥️</p>
@@ -323,34 +344,34 @@
 
             <div class="photo-gallery">
                 <div class="photo-item" onclick="openModal('photo1')">
-                    <img src="صور/(1).jpeg" alt="صورة 1">
+                    <img src="(1).jpeg" alt="صورة 1">
                 </div>
                 <div class="photo-item" onclick="openModal('photo2')">
-                    <img src="صور/(2).jpeg" alt="صورة 2">
+                    <img src="(2).jpeg" alt="صورة 2">
                 </div>
                 <div class="photo-item" onclick="openModal('photo3')">
-                    <img src="صور/(3).jpeg" alt="صورة 3">
+                    <img src="(3).jpeg" alt="صورة 3">
                 </div>
                 <div class="photo-item" onclick="openModal('photo4')">
-                    <img src="صور/(4).jpeg" alt="صورة 4">
+                    <img src="(4).jpeg" alt="صورة 4">
                 </div>
                 <div class="photo-item" onclick="openModal('photo5')">
-                    <img src="صور/(5).jpeg" alt="صورة 5">
+                    <img src="(5).jpeg" alt="صورة 5">
                 </div>
                 <div class="photo-item" onclick="openModal('photo6')">
-                    <img src="صور/(6).jpeg" alt="صورة 6">
+                    <img src="(6).jpeg" alt="صورة 6">
                 </div>
                 <div class="photo-item" onclick="openModal('photo7')">
-                    <img src="صور/(7).jpeg" alt="صورة 7">
+                    <img src="(7).jpeg" alt="صورة 7">
                 </div>
                 <div class="photo-item" onclick="openModal('photo8')">
-                    <img src="صور/(8).jpeg" alt="صورة 8">
+                    <img src="(8).jpeg" alt="صورة 8">
                 </div>
                 <div class="photo-item" onclick="openModal('photo9')">
-                    <img src="صور/(9).jpeg" alt="صورة 9">
+                    <img src="(9).jpeg" alt="صورة 9">
                 </div>
                 <div class="photo-item" onclick="openModal('photo10')">
-                    <img src="صور/(10).jpeg" alt="صورة 10">
+                    <img src="(10).jpeg" alt="صورة 10">
                 </div>
             </div>
 
@@ -384,6 +405,10 @@
     <script>
         const PASSWORD = "792003"; // غيري كلمة السر هنا
 
+        function encodePath(p) {
+            try { return encodeURI(p); } catch (e) { return p; }
+        }
+
         function checkPassword(event) {
             event.preventDefault();
             const inputPassword = document.getElementById('password').value;
@@ -408,20 +433,20 @@
         function openModal(photoId) {
             const modal = document.getElementById('imageModal');
             const images = {
-                'photo1': { src: 'صور/(1).jpeg', caption: 'ذكرى جميلة 1 💑' },
-                'photo2': { src: 'صور/(2).jpeg', caption: 'ذكرى جميلة 2 💕' },
-                'photo3': { src: 'صور/(3).jpeg', caption: 'ذكرى جميلة 3 ✨' },
-                'photo4': { src: 'صور/(4).jpeg', caption: 'ذكرى جميلة 4 💖' },
-                'photo5': { src: 'صور/(5).jpeg', caption: 'ذكرى جميلة 5 🌹' },
-                'photo6': { src: 'صور/(6).jpeg', caption: 'ذكرى جميلة 6 🌟' },
-                'photo7': { src: 'صور/(7).jpeg', caption: 'ذكرى جميلة 7 💫' },
-                'photo8': { src: 'صور/(8).jpeg', caption: 'ذكرى جميلة 8 🎈' },
-                'photo9': { src: 'صور/(9).jpeg', caption: 'ذكرى جميلة 9 🌸' },
-                'photo10': { src: 'صور/(10).jpeg', caption: 'ذكرى جميلة 10 ❤️' }
+                'photo1': { src: '(1).jpeg', caption: 'ذكرى جميلة 1 💑' },
+                'photo2': { src: '(2).jpeg', caption: 'ذكرى جميلة 2 💕' },
+                'photo3': { src: '(3).jpeg', caption: 'ذكرى جميلة 3 ✨' },
+                'photo4': { src: '(4).jpeg', caption: 'ذكرى جميلة 4 💖' },
+                'photo5': { src: '(5).jpeg', caption: 'ذكرى جميلة 5 🌹' },
+                'photo6': { src: '(6).jpeg', caption: 'ذكرى جميلة 6 🌟' },
+                'photo7': { src: '(7).jpeg', caption: 'ذكرى جميلة 7 💫' },
+                'photo8': { src: '(8).jpeg', caption: 'ذكرى جميلة 8 🎈' },
+                'photo9': { src: '(9).jpeg', caption: 'ذكرى جميلة 9 🌸' },
+                'photo10': { src: '(10).jpeg', caption: 'ذكرى جميلة 10 ❤️' }
             };
 
             const image = images[photoId];
-            document.getElementById('modalImage').src = image.src;
+            document.getElementById('modalImage').src = encodePath(image.src);
             document.getElementById('photoCaption').textContent = image.caption;
             modal.classList.add('active');
         }
@@ -435,14 +460,27 @@
             if (e.target === this) closeModal();
         });
 
-        // حاول تشغيل الصوت تلقائياً عند تحميل الصفحة (قد تمنع المتصفحات التشغيل التلقائي)
+        // عند التحميل نشفر مسارات الصور/الأصوات المحلية ونحاول تشغيل الصوت (إن سمح المتصفح)
         document.addEventListener('DOMContentLoaded', function() {
+            // encode img src attributes that are relative
+            document.querySelectorAll('img').forEach(img => {
+                const s = img.getAttribute('src');
+                if (s && !s.match(/^data:|^https?:|^file:/i)) img.src = encodePath(s);
+            });
+
+            // encode audio source
             const audio = document.getElementById('bgAudio');
             if (audio) {
-                audio.play().catch(function(err) {
-                    // التشغيل التلقائي قد يكون محظوراً من المتصفح، المستخدم يحتاج للنقر لتشغيل الصوت
-                    console.log('Autoplay blocked or failed:', err);
-                });
+                const srcElem = audio.querySelector('source');
+                if (srcElem) {
+                    const s = srcElem.getAttribute('src');
+                    if (s && !s.match(/^https?:|^data:/i)) srcElem.src = encodePath(s);
+                    audio.load();
+                    audio.play().catch(function(err) {
+                        // التشغيل التلقائي قد يكون محظوراً من المتصفح، المستخدم يحتاج للنقر لتشغيل الصوت
+                        console.log('Autoplay blocked or failed:', err);
+                    });
+                }
             }
         });
     </script>
