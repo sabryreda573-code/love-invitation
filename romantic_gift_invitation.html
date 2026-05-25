@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .heart {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: heartbeat 1.3s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10% { transform: scale(1.1); }
+            20% { transform: scale(1); }
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        input[type="password"], input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="password"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        label {
+            display: block;
+            text-align: right;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 8px;
+            text-align: right;
+        }
+
+        .hidden-content {
+            display: none;
+        }
+
+        .hidden-content.active {
+            display: block;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .music-player {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .music-player h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        audio {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            background: #f8f9fa;
+            border-right: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: right;
+            color: #555;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .logout-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            animation: zoomIn 0.3s ease-out;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: white;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .welcome-text {
+            text-align: right;
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div class="login-card" id="loginSection">
+            <div class="heart">❤️</div>
+            <h1>دعـوة خـاصـة بـ NaNosa 🤎🫂 </h1>
+            <p class="subtitle">أدخلي كلمة السر لترين المفاجأة 💕</p>
+            
+            <form onsubmit="checkPassword(event)">
+                <div class="input-group">
+                    <label for="password">كلمة السر:</label>
+                    <input type="password" id="password" placeholder="أدخلي كلمة السر" required>
+                </div>
+                <button type="submit" class="submit-btn">دخول ❤️</button>
+                <div class="error" id="errorMsg"></div>
+            </form>
+        </div>
+
+        <!-- Gallery Section -->
+        <div class="login-card hidden-content" id="gallerySection">
+            <div class="heart">💕</div>
+            <h1>مفاجأة خاصة بڪكِ 🤎🫂</h1>
+            
+            <div class="welcome-text">
+                <p>ڪُل عامٍ والڪُل يعرفنا معًا لا قدر الله أياماً تخلو منڪكِ 🤎🫂</p>
+            </div>
+
+            <div class="music-player">
+                <h3>🎵 أغنيتك المفضلة</h3>
+                <audio id="bgAudio" controls autoplay preload="auto" style="margin-bottom: 10px;">
+                    <source src="صور/WhatsApp%20Audio%202026-05-25%20at%2010.59.38%20AM.mpeg" type="audio/mpeg">
+                    المتصفح لا يدعم تشغيل الأغاني
+                </audio>
+                <p style="font-size: 12px; color: #999;">اضغطي Play لتسمعي الأغنية ♥️</p>
+            </div>
+
+            <p style="text-align: right; margin-bottom: 20px; color: #666; font-size: 14px;">💝 الصور من لحظاتنا الجميلة:</p>
+
+            <div class="photo-gallery">
+                <div class="photo-item" onclick="openModal('photo1')">
+                    <img src="صور/IMG-20251026-WA0019.jpg.jpeg" alt="صورة 1">
+                </div>
+                <div class="photo-item" onclick="openModal('photo2')">
+                    <img src="صور/IMG-20251210-WA0058.jpg.jpeg" alt="صورة 2">
+                </div>
+                <div class="photo-item" onclick="openModal('photo3')">
+                    <img src="صور/IMG-20251210-WA0061.jpg.jpeg" alt="صورة 3">
+                </div>
+                <div class="photo-item" onclick="openModal('photo4')">
+                    <img src="صور/IMG-20251221-WA0060.jpg.jpeg" alt="صورة 4">
+                </div>
+                <div class="photo-item" onclick="openModal('photo5')">
+                    <img src="صور/IMG-20260331-WA0136.jpg.jpeg" alt="صورة 5">
+                </div>
+                <div class="photo-item" onclick="openModal('photo6')">
+                    <img src="صور/IMG-20260331-WA0137.jpg.jpeg" alt="صورة 6">
+                </div>
+                <div class="photo-item" onclick="openModal('photo7')">
+                    <img src="صور/IMG-20260331-WA0147.jpg.jpeg" alt="صورة 7">
+                </div>
+                <div class="photo-item" onclick="openModal('photo8')">
+                    <img src="صور/IMG-20260331-WA0151.jpg.jpeg" alt="صورة 8">
+                </div>
+                <div class="photo-item" onclick="openModal('photo9')">
+                    <img src="صور/IMG-20260331-WA0164.jpg.jpeg" alt="صورة 9">
+                </div>
+                <div class="photo-item" onclick="openModal('photo10')">
+                    <img src="صور/IMG__.jpg.jpeg" alt="صورة 10">
+                </div>
+            </div>
+
+            <div class="message">
+                <p>💌 رسالة خاصة بـ NaNosa 🤎🫂</p>
+                <br>
+                <p>‏في آواخر مايو ڪُل عامٍ والقلبُ لا يميلُ إلا إليـڪكِ 🤎🫂</p>
+                <p>ويا حُلو عيدي وأنتِ فيه ڪُل عَام وأعيادي مُڪتملةٌ فيڪكِ 🤎🫂</p>
+                <p>ڪُل عامٍ والڪُل يعرفنا معًا لا قدر الله أياماً تخلو منڪكِ 🤎🫂</p>
+                <p>أنتَ عيدي قبل أن يبدأ عيدهم وفرحتي في ڪُل أعيادي وڪُل عام وأنتِ عيدي 🤎🫂</p>
+                <p>‏عسى صوتڪكِ يبتدي فيه عيدي 🤎🫂</p>
+                <p>يا لذة العيد ويا حلو عيدي وأنتِ فيه 🤎🫂</p>
+                <p>ڪُل عامٍ وانتِ ضَي عيني وڪُل أشيائي 🤎🫂</p>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">الرجوع 🔙</button>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <img class="modal-image" id="modalImage" src="" alt="صورة">
+            <div style="padding: 20px; text-align: center;">
+                <p id="photoCaption" style="color: #666; margin: 0;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PASSWORD = "123"; // غيري كلمة السر هنا
+
+        function checkPassword(event) {
+            event.preventDefault();
+            const inputPassword = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (inputPassword === PASSWORD) {
+                errorMsg.textContent = '';
+                document.getElementById('loginSection').classList.add('hidden-content');
+                document.getElementById('gallerySection').classList.add('active');
+            } else {
+                errorMsg.textContent = '❌ كلمة السر خاطئة، حاولي تاني!';
+            }
+        }
+
+        function logout() {
+            document.getElementById('gallerySection').classList.remove('active');
+            document.getElementById('loginSection').classList.remove('hidden-content');
+            document.getElementById('password').value = '';
+            document.getElementById('errorMsg').textContent = '';
+        }
+
+        function openModal(photoId) {
+            const modal = document.getElementById('imageModal');
+            const images = {
+                'photo1': { src: 'صور/IMG-20251026-WA0019.jpg.jpeg', caption: 'ذكرى جميلة 💑' },
+                'photo2': { src: 'صور/IMG-20251210-WA0058.jpg.jpeg', caption: 'لحظة سعادتنا 💕' },
+                'photo3': { src: 'صور/IMG-20251210-WA0061.jpg.jpeg', caption: 'أجمل ذكريات ✨' },
+                'photo4': { src: 'صور/IMG-20251221-WA0060.jpg.jpeg', caption: 'أنتِ نوري 💖' },
+                'photo5': { src: 'صور/IMG-20260331-WA0136.jpg.jpeg', caption: 'وردة حب 🌹' },
+                'photo6': { src: 'صور/IMG-20260331-WA0137.jpg.jpeg', caption: 'لحظة هادئة 🌟' },
+                'photo7': { src: 'صور/IMG-20260331-WA0147.jpg.jpeg', caption: 'أمسية جميلة 💫' },
+                'photo8': { src: 'صور/IMG-20260331-WA0151.jpg.jpeg', caption: 'احتفال صغير 🎈' },
+                'photo9': { src: 'صور/IMG-20260331-WA0164.jpg.jpeg', caption: 'زهور وابتسامات 🌸' },
+                'photo10': { src: 'صور/IMG__.jpg.jpeg', caption: 'قلبي ليك ❤️' }
+            };
+
+            const image = images[photoId];
+            document.getElementById('modalImage').src = image.src;
+            document.getElementById('photoCaption').textContent = image.caption;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // حاول تشغيل الصوت تلقائياً عند تحميل الصفحة (قد تمنع المتصفحات التشغيل التلقائي)
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('bgAudio');
+            if (audio) {
+                audio.play().catch(function(err) {
+                    // التشغيل التلقائي قد يكون محظوراً من المتصفح، المستخدم يحتاج للنقر لتشغيل الصوت
+                    console.log('Autoplay blocked or failed:', err);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
